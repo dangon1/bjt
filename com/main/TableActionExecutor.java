@@ -39,9 +39,19 @@ public class TableActionExecutor {
 			finishRound = stand();
 			break;
 		case "Ds":
-			finishRound = doubleDown(player);
+			if(player.getCardGroups().size()<=2) {
+				finishRound = doubleDown(player);
+			} else {
+				finishRound = stand();
+			}
+
 			break;
 		case "D":
+			if(player.getCardGroups().size()<=2) {
+				finishRound = doubleDown(player);
+			} else {
+				finishRound = hit(player);
+			}
 			finishRound = doubleDown(player);
 			break;
 		case "H":
