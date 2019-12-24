@@ -21,7 +21,7 @@ public class BasicStrategyMap {
 	}
 
 	private void hardTotals() {
-		
+
 		// sum 17
 		basicStrategy.put("17;2", "S");
 		basicStrategy.put("17;3", "S");
@@ -31,9 +31,9 @@ public class BasicStrategyMap {
 		basicStrategy.put("17;7", "S");
 		basicStrategy.put("17;8", "S");
 		basicStrategy.put("17;9", "S");
-		basicStrategy.put("17;10","S");
+		basicStrategy.put("17;10", "S");
 		basicStrategy.put("17;A", "S");
-		
+
 		// sum 16
 		basicStrategy.put("16;2", "S");
 		basicStrategy.put("16;3", "S");
@@ -45,7 +45,7 @@ public class BasicStrategyMap {
 		basicStrategy.put("16;9", "SUR");
 		basicStrategy.put("16;10", "SUR");
 		basicStrategy.put("16;A", "SUR");
-		
+
 		// sum 15
 		basicStrategy.put("15;2", "S");
 		basicStrategy.put("15;3", "S");
@@ -57,7 +57,7 @@ public class BasicStrategyMap {
 		basicStrategy.put("15;9", "H");
 		basicStrategy.put("15;10", "SUR");
 		basicStrategy.put("15;A", "H");
-		
+
 		// sum 14
 		basicStrategy.put("14;2", "S");
 		basicStrategy.put("14;3", "S");
@@ -69,7 +69,7 @@ public class BasicStrategyMap {
 		basicStrategy.put("14;9", "H");
 		basicStrategy.put("14;10", "H");
 		basicStrategy.put("14;A", "H");
-		
+
 		// sum 13
 		basicStrategy.put("13;2", "S");
 		basicStrategy.put("13;3", "S");
@@ -81,7 +81,7 @@ public class BasicStrategyMap {
 		basicStrategy.put("13;9", "H");
 		basicStrategy.put("13;10", "H");
 		basicStrategy.put("13;A", "H");
-		
+
 		// sum 12
 		basicStrategy.put("12;2", "H");
 		basicStrategy.put("12;3", "H");
@@ -93,7 +93,7 @@ public class BasicStrategyMap {
 		basicStrategy.put("12;9", "H");
 		basicStrategy.put("12;10", "H");
 		basicStrategy.put("12;A", "H");
-		
+
 		// sum 11
 		basicStrategy.put("11;2", "D");
 		basicStrategy.put("11;3", "D");
@@ -105,7 +105,7 @@ public class BasicStrategyMap {
 		basicStrategy.put("11;9", "D");
 		basicStrategy.put("11;10", "D");
 		basicStrategy.put("11;A", "D");
-		
+
 		// sum 10
 		basicStrategy.put("10;2", "D");
 		basicStrategy.put("10;3", "D");
@@ -115,9 +115,9 @@ public class BasicStrategyMap {
 		basicStrategy.put("10;7", "D");
 		basicStrategy.put("10;8", "D");
 		basicStrategy.put("10;9", "D");
-		basicStrategy.put("10;10","H");
+		basicStrategy.put("10;10", "H");
 		basicStrategy.put("10;A", "H");
-		
+
 		// sum 9
 		basicStrategy.put("9;2", "H");
 		basicStrategy.put("9;3", "D");
@@ -127,9 +127,9 @@ public class BasicStrategyMap {
 		basicStrategy.put("9;7", "H");
 		basicStrategy.put("9;8", "H");
 		basicStrategy.put("9;9", "H");
-		basicStrategy.put("9;10","H");
+		basicStrategy.put("9;10", "H");
 		basicStrategy.put("9;A", "H");
-		
+
 		// sum 8
 		basicStrategy.put("8;2", "H");
 		basicStrategy.put("8;3", "H");
@@ -139,13 +139,13 @@ public class BasicStrategyMap {
 		basicStrategy.put("8;7", "H");
 		basicStrategy.put("8;8", "H");
 		basicStrategy.put("8;8", "H");
-		basicStrategy.put("8;10","H");
+		basicStrategy.put("8;10", "H");
 		basicStrategy.put("8;A", "H");
-		
+
 	}
 
 	public String nextPlay(String tableSituation) {
-		
+
 		return basicStrategy.get(tableSituation);
 	}
 

@@ -1,18 +1,18 @@
 package com.main;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import static com.utils.Constants.MINIMUM_BET;
+import static com.utils.Constants.NUMBER_OF_PLAYS;
 
+import java.util.List;
+
+import com.cards.Card;
 import com.cards.Deck;
 import com.cards.DeckPack;
 import com.parsers.TableSituationParser;
-import com.parties.CardsHolder;
 import com.parties.Dealer;
 import com.parties.Player;
 import com.utils.CardUtils;
-import static com.utils.Constants.MINIMUM_BET;
-import static com.utils.Constants.NUMBER_OF_PLAYS;;
+import com.utils.Constants;;
 
 public class Main {
 
@@ -31,67 +31,95 @@ public class Main {
 		while (numberPlays < NUMBER_OF_PLAYS) {
 			System.out.println("============NEW HAND===============");
 			player.getAI().getResultsCounter().addTotalHands();
-			Integer finishRound = null;
 			player.getProfit();
 			player.bet(MINIMUM_BET);
 			distributeCards();
 			sortAllDealtCards();
-			while (player.getTotalCash() > 0 && !gotOver21(player) && !gotOver21(dealer)) {
-				String tableSituation = TableSituationParser.parseTableSituation(player.getCardGroups(),
-						dealer.getUpCard());
+			
+			for (Integer groupCardsNumber : player.getCardGroups().keySet()) {
+				Integer finishRound = null;
+				List<Card> playerCardsFromCurrentGroup = player.getCardGroups().get(groupCardsNumber);
+				while (player.getTotalCash() > 0 && !gotOver21(playerCardsFromCurrentGroup) && !gotOver21(dealer.getCards())) {
 
-				String playerPlay = player.getAI().decideBestPlay(player, tableSituation);
-				finishRound = executor.executeAction(playerPlay, player, dealer.getCards(), deckPack);
-				if(finishRound.equals(1) || finishRound.equals(-1)) {
-					if(player.getSumCards().stream().anyMatch(s -> s == 21)) {
-						finishRound = -1;
+					String tableSituation = TableSituationParser.parseTableSituation(playerCardsFromCurrentGroup,
+							dealer.getUpCard());
+
+					String playerPlay = player.getAI().decideBestPlay(playerCardsFromCurrentGroup, tableSituation);
+					finishRound = executor.executeAction(player, playerPlay, playerCardsFromCurrentGroup, dealer.getCards(),
+							deckPack);
+					if (finishRound.equals(1) || finishRound.equals(-1)) {
+						if (player.getSumCards().stream().anyMatch(s -> s == 21)) {
+							finishRound = -1;
+						}
+						break;
 					}
+				}
+				
+				if (finishRound == -1) {
+					showHands();
+					payBlackjackToPlayer(playerCardsFromCurrentGroup);
+					player.getAI().getResultsCounter().addVictory();
+					break;
+				} else {
+					dealer.play();
+					showHands();
+					analyseResult(playerCardsFromCurrentGroup);
 					break;
 				}
 			}
-			if (finishRound == -1) {
-				payBlackjackToPlayer();
-				player.getAI().getResultsCounter().addVictory();
-			} else {
-				dealer.play();
-				analyseResult();
-			}
+			
+
 			discardHands();
 			numberPlays++;
 		}
 		showResults();
 	}
 
-	private static void payBlackjackToPlayer() {
+	private static void payBlackjackToPlayer(List<Card> playerCardsFromCurrentGroup) {
 		
-		player.setTotalCash(player.getTotalCash() + getNumberOfBlackjacks(player)*(player.getBet() + (int) Math.round(player.getBet() * 0.5)));
+		int profit = madeBlackjack(playerCardsFromCurrentGroup)*(player.getBet() + (int) Math.round(player.getBet() * 0.5));
+		System.out.println("WON: " + profit);
+		player.getAI().getResultsCounter().addProfit(profit);
+		player.setTotalCash(player.getTotalCash() + profit);
 	}
 
-	private static void analyseResult() {
-		showHands();
+	private static void analyseResult(List<Card> cardsFromCurrentGroup) {
 		Integer numberOfLosses = 0;
 		Integer numberOfDraws = 0;
 		Integer numberOfWins = 0;
-		numberOfLosses = getNumberOfPlayerLosses(player, dealer);
-		numberOfDraws = getNumberOfDraws(player, dealer);
+		numberOfLosses = getNumberOfPlayerLosses(cardsFromCurrentGroup, dealer.getCards());
+		numberOfDraws = getNumberOfDraws(cardsFromCurrentGroup, dealer.getCards());
 		numberOfWins = player.getCardGroups().size() - numberOfLosses - numberOfDraws;
-		player.setTotalCash(player.getTotalCash() + (numberOfWins * player.getBet()));
-		player.setBet(player.getBet() - (numberOfLosses * player.getBet()));
+		
+		int profit = numberOfWins * player.getBet();
+		player.setTotalCash(player.getTotalCash() + profit);
+		int loss = numberOfLosses * player.getBet();
+		player.setBet(player.getBet() - loss);
+		
+		if(profit>0) {
+			player.getAI().getResultsCounter().addProfit(profit);
+			System.out.println("WON: " + profit);
+		}
+		if(loss>0) {
+			System.out.println("LOSS: " + loss);
+			player.getAI().getResultsCounter().addProfit(-loss);
+		} if(numberOfDraws > 0) {
+			System.out.println("DRAW!");
+		}
 		
 		player.getAI().getResultsCounter().setTotalVictories(player.getAI().getResultsCounter().getTotalVictories() + numberOfWins);
 		player.getAI().getResultsCounter().setTotalDefeats(player.getAI().getResultsCounter().getTotalDefeats() + numberOfLosses);
 		player.getAI().getResultsCounter().setTotalDraws(player.getAI().getResultsCounter().getTotalDraws() + numberOfDraws);
 	}
 
-	private static Integer getNumberOfDraws(Player player, Dealer dealer) {
+	private static Integer getNumberOfDraws(List<Card> cardsFromCurrentGroup, List<Card> dealerCard) {
 		Integer numberOfDraws = 0;
-		for (int i = 0; i < player.getCardGroups().size(); i++) {
-			if (!gotOver21(player) && !gotOver21(dealer) && player.getSumCards().get(i).equals(dealer.getSumCards().get(0))) {
-				numberOfDraws++;
-			}
+		if (!gotOver21(cardsFromCurrentGroup) && !gotOver21(dealerCard)
+				&& CardUtils.getSumOfCards(cardsFromCurrentGroup).equals(CardUtils.getSumOfCards(dealerCard))) {
+			numberOfDraws++;
 		}
 		return numberOfDraws;
-		
+
 	}
 
 	private static void showHands() {
@@ -100,23 +128,21 @@ public class Main {
 		
 	}
 
-	private static boolean gotOver21(CardsHolder cardsHolder) {
-		return cardsHolder.getSumCards().stream().anyMatch(s -> s > 21);
+	private static boolean gotOver21(List<Card> cards) {
+		return CardUtils.getSumOfCards(cards) > 21;
 
 	}
 	
-	private static Integer getNumberOfBlackjacks(CardsHolder cardsHolder) {
-		return cardsHolder.getSumCards().stream().filter(s -> s == 21).collect(Collectors.toList()).size();
+	private static Integer madeBlackjack(List<Card> cards) {
+		return  CardUtils.getSumOfCards(cards) == 21 ? 1 : 0;
 
 	}
 
-	public static Integer getNumberOfPlayerLosses(Player player, Dealer dealer) {
+	public static Integer getNumberOfPlayerLosses(List<Card> playerCards, List<Card> dealerCards) {
 		Integer numberOfLosses = 0;
-		for (int i = 0; i < player.getCardGroups().size(); i++) {
-			if ((player.getSumCards().get(i) > 21) 
-					|| !gotOver21(dealer) && dealer.getSumCards().get(0) > player.getSumCards().get(i)) {
-				numberOfLosses++;
-			}
+		if ((CardUtils.getSumOfCards(playerCards) > 21)
+				|| !gotOver21(dealerCards) && CardUtils.getSumOfCards(dealerCards) > CardUtils.getSumOfCards(playerCards)) {
+			numberOfLosses++;
 		}
 		return numberOfLosses;
 	}
@@ -130,6 +156,7 @@ public class Main {
 		System.out.println("Victories:" + player.getAI().getResultsCounter().getPercentageVictory()+ "%");
 		System.out.println("Draws: " + player.getAI().getResultsCounter().getPercentageDraw() + "%");
 		System.out.println("Defeats: " + player.getAI().getResultsCounter().getPercentageDefeats() + "%");
+		System.out.println("Total Profit: " + player.getAI().getResultsCounter().getTotalProfit());
 
 	}
 
@@ -139,7 +166,7 @@ public class Main {
 		dealer = Dealer.builder().build();
 		player.getAI().getBs().setStrategies();
 
-		setDeckPack(1);
+		setDeckPack(Constants.NUMBER_OF_DECKS);
 	}
 
 	private static void discardHands() {

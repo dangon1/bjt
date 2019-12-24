@@ -1,5 +1,7 @@
 package com.parties;
 
+import static com.parsers.TableSituationParser.getTableSituationPerGroupOfCards;
+
 import java.util.List;
 import java.util.Map;
 
@@ -7,13 +9,10 @@ import com.cards.Card;
 import com.parsers.TableSituationParser;
 import com.statistics.ResultsCounter;
 import com.strategies.BasicStrategyMap;
+import com.utils.CardUtils;
 
 import lombok.Builder;
 import lombok.Getter;
-import static com.parsers.TableSituationParser.SET_SEPARATOR;
-import static com.parsers.TableSituationParser.PLAYER_SEPARATOR;
-import static com.parsers.TableSituationParser.getDealerUpCard;
-import static com.parsers.TableSituationParser.getTableSituationPerGroupOfCards;
 
 @Getter
 @Builder
@@ -24,28 +23,22 @@ public class AIPlayer {
 	@Builder.Default
 	private ResultsCounter resultsCounter = ResultsCounter.builder().build();
 
-	public String decideBestPlay(Player player, String fullTableSituation) {
-		Map<Integer, List<Card>> playerCardGroups = player.getCardGroups();
+	public String decideBestPlay(List<Card> groupCards, String fullTableSituation) {
 		String bestPlay = "";
 		System.out.println("HAND -->" + fullTableSituation);
 
-		for (Integer groupNumber : playerCardGroups.keySet()) {
-			List<Card> cardsFromActualGroup = playerCardGroups.get(groupNumber);
-			if (cardsFromActualGroup.get(0).getFace().equals("10") && cardsFromActualGroup.get(1).getFace().equals("A")) {
-				System.out.println("BLACKJACK!");
-				resultsCounter.addBlackjack();
-			} else {
-				List<String> cardsGroups = getTableSituationPerGroupOfCards(fullTableSituation);
-				for (String cardGroup : cardsGroups) {
-					bestPlay = bs.nextPlay(cardGroup);
-					if (bestPlay == null || !bestPlay.equals("Y")) {
-						Integer sumCardsPlayer = player.getSumCards().get(groupNumber);
-						bestPlay = takeDecisionBasedOnSum(sumCardsPlayer, cardsFromActualGroup, fullTableSituation.split(";")[1]);
-					} else {
-						System.out.println("Decision --> " + bestPlay);
-					}
-
-				}
+		if (groupCards.get(0).getFace().equals("10") && groupCards.get(1).getFace().equals("A")) {
+			System.out.println("BLACKJACK!");
+			resultsCounter.addBlackjack();
+		} else {
+			List<String> cardsGroups = getTableSituationPerGroupOfCards(fullTableSituation);
+			for (String cardGroup : cardsGroups) {
+				bestPlay = bs.nextPlay(cardGroup);
+				if (bestPlay == null) {
+					Integer sumCardsPlayer = CardUtils.getSumOfCards(groupCards);
+					bestPlay = takeDecisionBasedOnSum(sumCardsPlayer, groupCards,
+							fullTableSituation.split(";")[1]);
+				} 
 			}
 		}
 		return bestPlay;

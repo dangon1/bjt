@@ -21,6 +21,9 @@ public class ResultsCounter {
 	private Double totalDefeats = new Double(0);
 	
 	@Builder.Default
+	private Integer totalProfit = new Integer(0);
+	
+	@Builder.Default
 	private Double totalHands = new Double(0);
 
 	public void addBlackjack() {
@@ -33,6 +36,10 @@ public class ResultsCounter {
 
 	public void addTotalHands() {
 		totalHands++;
+	}
+	
+	public void addProfit(Integer value) {
+		totalProfit += value;
 	}
 
 	public Double getPercentageBlackjacks() {

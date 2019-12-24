@@ -24,6 +24,47 @@ public class CardUtils {
 		Collections.reverse(cards.stream().map(Card::getFace).collect(Collectors.toList()));
 	}
 	
+	public static Integer getSumOfCards(List<Card> cards) {
+		Integer sum =0;
+		if(cards.stream().anyMatch(c -> c.getFace().equals("A"))) {
+			sum = sumWhenHaveAces(cards);
+		} else {
+			sum = simpleSum(cards);
+		}
+		
+		return sum;
+	}
+	
+	private static Integer sumWhenHaveAces(List<Card> cards) {
+		Integer sum = sumWithAces(cards,11);
+		if(sum > 21) {
+			sum = sumWithAces(cards,1);
+		}
+		return sum;
+	}
+	
+	
+	private static Integer simpleSum(List<Card> cards) {
+		Integer sum = 0;
+		for (Card card : cards) {
+			sum += Integer.parseInt(card.getFace());
+		}
+		return sum;
+	}
+	
+	private static Integer sumWithAces(List<Card> cards, Integer aceValue) {
+		Integer sum = 0;
+		for (Card card : cards) {
+			if(card.getFace().equals("A")) {
+				sum += aceValue;
+			} else {
+				sum += Integer.parseInt(card.getFace());
+			}
+		}
+		return sum;
+		
+	}
+	
 	public static void replaceJQKFor10(List<Card> cards) {
 		for (Card card : cards) {
 			

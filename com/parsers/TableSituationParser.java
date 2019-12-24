@@ -23,15 +23,13 @@ public class TableSituationParser {
 		return null;
 	}
 
-	public static String parseTableSituation(Map<Integer, List<Card>> cardsSetPlayer, Card dealerUpCard) {
+	public static String parseTableSituation(List<Card> groupCards, Card dealerUpCard) {
 		StringBuilder tableSituation = new StringBuilder();
 
-		cardsSetPlayer.keySet().stream().forEach(setNumber -> {
-			for (Card card : cardsSetPlayer.get(setNumber)) {
-				tableSituation.append(card.getFace()).append(CARDS_SEPARATOR);
-			}
-			tableSituation.append(SET_SEPARATOR);
-		});
+		for (Card card : groupCards) {
+			tableSituation.append(card.getFace()).append(CARDS_SEPARATOR);
+		}
+		tableSituation.append(SET_SEPARATOR);
 
 		tableSituation.deleteCharAt(tableSituation.lastIndexOf(CARDS_SEPARATOR));
 		tableSituation.append(PLAYER_SEPARATOR).append(dealerUpCard.getFace());

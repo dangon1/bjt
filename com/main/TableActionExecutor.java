@@ -1,12 +1,13 @@
 package com.main;
 
+import static com.utils.Constants.MINIMUM_BET;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import com.cards.Card;
 import com.cards.DeckPack;
 import com.parties.Player;
-import static com.utils.Constants.MINIMUM_BET;
 
 import lombok.Builder;
 
@@ -21,41 +22,46 @@ public class TableActionExecutor {
 	 * @param deckPack
 	 * @return if true, finish the round and go to analysis, else continue to play
 	 */
-	public Integer executeAction(String play, Player player, List<Card> dealerCards, DeckPack deckPack) {
+	public Integer executeAction(Player player, String play, List<Card> cards, List<Card> dealerCards,
+			DeckPack deckPack) {
 
 		Integer finishRound = 0;
 		switch (play) {
 		case "Y":
-			//TODO: SPLIT
-			//finishRound = splitHit(player);
-			finishRound = hit(player);
+			// TODO: SPLIT
+			// finishRound = splitHit(player);
+			finishRound = hit(cards);
 			break;
 		case "Y/N":
-			//TODO: SPLIT
-			//finishRound = splitHit(player);
-			finishRound = hit(player);
+			// TODO: SPLIT
+			// finishRound = splitHit(player);
+			finishRound = hit(cards);
+			break;
+		case "N":
+			// TODO: SPLIT
+			// finishRound = splitHit(player);
+			finishRound = hit(cards);
 			break;
 		case "S":
 			finishRound = stand();
 			break;
 		case "Ds":
-			if(player.getCardGroups().size()<=2) {
-				finishRound = doubleDown(player);
+			if (cards.size() <= 2) {
+				finishRound = doubleDown(cards, player);
 			} else {
 				finishRound = stand();
 			}
 
 			break;
 		case "D":
-			if(player.getCardGroups().size()<=2) {
-				finishRound = doubleDown(player);
+			if (cards.size() <= 2) {
+				finishRound = doubleDown(cards, player);
 			} else {
-				finishRound = hit(player);
+				finishRound = hit(cards);
 			}
-			finishRound = doubleDown(player);
 			break;
 		case "H":
-			finishRound = hit(player);
+			finishRound = hit(cards);
 			break;
 		case "SUR":
 			finishRound = surrender(player);
@@ -68,10 +74,8 @@ public class TableActionExecutor {
 		return finishRound;
 	}
 
-	private Integer hit(Player player) {
-		for (Integer numberOfGroup : player.getCardGroups().keySet()) {
-			hitOneGroup(player.getCardGroups().get(numberOfGroup));
-		}
+	private Integer hit(List<Card> cards) {
+		hitOneGroup(cards);
 		return 0;
 	}
 
@@ -86,20 +90,19 @@ public class TableActionExecutor {
 		return 1;
 	}
 
-	public Integer doubleDown(Player player) {
+	public Integer doubleDown(List<Card> cards, Player player) {
 		System.out.println("Decided to DOUBLE DOWN");
 		player.bet(MINIMUM_BET);
-		for (Integer numberOfGroup : player.getCardGroups().keySet()) {
-			hitOneGroup(player.getCardGroups().get(numberOfGroup));
-		}
+		hitOneGroup(cards);
 		return 1;
 	}
 
 	public Integer splitHit(Player player) {
+		System.out.println("Decided to SPLIT");
 		player.setTotalCash(player.getTotalCash() - player.getBet());
-		player.setBet(player.getBet()*2);
+		System.out.println("Bet + " + player.getBet());
+		player.setBet(player.getBet() * 2);
 		removeCardFromOneGroupAndAddToOther(player);
-		hit(player);
 		return 0;
 	}
 
@@ -112,9 +115,13 @@ public class TableActionExecutor {
 	}
 
 	public Integer surrender(Player player) {
-		//TODO: LAST SURRENDER
-		System.out.println("Decided to HIT");
-		return hit(player);
+		// TODO: LAST SURRENDER
+		System.out.println("Decided to SURRENDER");
+		player.setTotalCash(player.getTotalCash() + player.getBet()/2);
+		System.out.println("LOSS:" + player.getBet()/2);
+		player.getAI().getResultsCounter().addProfit(-player.getBet()/2);
+		player.setBet(0);
+		return 1;
 	}
 
 }
