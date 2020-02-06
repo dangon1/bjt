@@ -3,11 +3,16 @@ package com.cards;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.main.GameEngine;
+import com.utils.Constants;
+
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Builder
 @Getter
+@Setter
 public class DeckPack {
 	
 	@Builder.Default
@@ -15,9 +20,7 @@ public class DeckPack {
 	
 	public Card getCard() {
 		if(cards.isEmpty()) {
-			Deck d1 = new Deck();
-			d1.createDeck();
-			this.getCards().addAll(d1.getCards());
+			GameEngine.createShoe(this, Constants.NUMBER_OF_DECKS);
 		}
 		return cards.remove(0);
 	}

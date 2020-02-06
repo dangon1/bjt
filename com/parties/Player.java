@@ -5,6 +5,8 @@ import static com.utils.Constants.INITIAL_CASH;
 import java.util.List;
 
 import com.cards.Card;
+import com.cards.CardsBet;
+import com.ui.ConsoleManager;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -20,31 +22,34 @@ public class Player extends CardsHolder {
 	@Setter
 	@Builder.Default
 	private Integer totalCash = INITIAL_CASH;
-	@Setter
-	@Builder.Default
-	private Integer bet = 0;
 
 	public List<Card> getCardsFromSet(Integer setNumber) {
-		return getCardGroups().get(setNumber);
+		return getCardsBetMap().get(setNumber).getCardsGroup();
+	}
+	
+	public Card removeOneCardFromCardGroupWithTwoCards() {
+		for (CardsBet cardGroup : getCardsBetMap().values()) {
+			if (cardGroup.getCardsGroup().size() > 1 && cardGroup.getCardsGroup().get(0).getFace().equals(cardGroup.getCardsGroup().get(1).getFace())) {
+				return cardGroup.getCardsGroup().remove(0);
+			}
+		}
+		return null;
+
 	}
 
-	public Card removeOneCardFromLastCardGroup() {
-		return getCardGroups().get(getCardGroups().size() - 1).remove(0);
-	}
-
-	public void bet(Integer betAmount) throws RuntimeException {
+	public void bet(Integer betAmount, Integer cardsGroupId) throws RuntimeException {
 		totalCash -= betAmount;
-		bet += betAmount;
-		if(totalCash<=0) {
+		getCardsBetMap().get(cardsGroupId).setBet(getCardsBetMap().get(cardsGroupId).getBet() + betAmount);
+		if (totalCash <= 0) {
 			throw new RuntimeException("LOST ALL MONEY, END OF GAME!");
 		}
-		System.out.println("BET + " + betAmount);
-		System.out.println("TOTAL CASH = " + totalCash);
+		ConsoleManager.showBet(betAmount);
+		ConsoleManager.showTotalCash(totalCash);
 	}
 
-	public void getProfit() {
-		setTotalCash(totalCash + bet);
-		bet =0;
+
+	public boolean hasMoney() {
+		return totalCash > 0;
 	}
 
 }

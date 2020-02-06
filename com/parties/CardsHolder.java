@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.cards.Card;
+import com.cards.CardsBet;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 @Getter
@@ -16,17 +18,18 @@ import lombok.experimental.SuperBuilder;
 public class CardsHolder {
 
 	@Builder.Default
-	private Map<Integer, List<Card>> cardGroups = new HashMap<Integer, List<Card>>() {
+	@Setter
+	private Map<Integer, CardsBet> cardsBetMap = new HashMap<Integer, CardsBet>() {
 		{
-			put(0, new ArrayList());
+			put(0, CardsBet.builder().build());
 		}
 	};
 
 	public List<Integer> getSumCards() {
 		List<Integer> sumCardsPerSet = new ArrayList<>();
 		Integer sum = 0;
-		for (Integer setNumber : cardGroups.keySet()) {
-			if(cardGroups.get(setNumber).stream().anyMatch(c -> c.getFace().equals("A"))) {
+		for (Integer setNumber : cardsBetMap.keySet()) {
+			if(cardsBetMap.get(setNumber).getCardsGroup().stream().anyMatch(c -> c.getFace().equals("A"))) {
 				sum = sumWhenHaveAces(setNumber);
 			} else {
 				sum = simpleSum(setNumber);
@@ -41,7 +44,7 @@ public class CardsHolder {
 
 	private Integer simpleSum(Integer setNumber) {
 		Integer sum = 0;
-		for (Card card : cardGroups.get(setNumber)) {
+		for (Card card : cardsBetMap.get(setNumber).getCardsGroup()) {
 			sum += Integer.parseInt(card.getFace());
 		}
 		return sum;
@@ -49,7 +52,7 @@ public class CardsHolder {
 	
 	private Integer sumWithAces(Integer setNumber, Integer aceValue) {
 		Integer sum = 0;
-		for (Card card : cardGroups.get(setNumber)) {
+		for (Card card : cardsBetMap.get(setNumber).getCardsGroup()) {
 			if(card.getFace().equals("A")) {
 				sum += aceValue;
 			} else {

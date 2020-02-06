@@ -37,11 +37,14 @@ public class TableSituationParser {
 	}
 
 	public static List<String> getTableSituationPerGroupOfCards(String fullTableSituation) {
-		Pattern p = Pattern.compile("[0-A]+,+[0-A]");
+		//REGEX QUEROU A SEPARACAO POR GROUP DEVE TER OUTRO CARACTER
+		Pattern p = Pattern.compile("[0-A]+(,+[0-A])*");
+		String playerCards = fullTableSituation.split(";")[0];
+		//Pattern p = Pattern.compile("[\\d]*[^;][^\\d]");
 
 		List<String> matches = new ArrayList<>();
 		List<String> situations = new ArrayList<>();
-		Matcher m = p.matcher(fullTableSituation);
+		Matcher m = p.matcher(playerCards);
 		while (m.find()) {
 	        matches.add(m.group(0));
 	    }

@@ -324,16 +324,16 @@ public class BasicStrategyMap {
 		basicStrategy.put("6,A;A", "H");
 
 		// A,5
-		basicStrategy.put("5,A;2", "Y/N");
-		basicStrategy.put("5,A;3", "Y/N");
-		basicStrategy.put("5,A;4", "Y");
-		basicStrategy.put("5,A;5", "Y");
-		basicStrategy.put("5,A;6", "Y");
-		basicStrategy.put("5,A;7", "Y");
-		basicStrategy.put("5,A;8", "N");
-		basicStrategy.put("5,A;9", "N");
-		basicStrategy.put("5,A;10", "N");
-		basicStrategy.put("5,A;A", "N");
+		basicStrategy.put("5,A;2", "H");
+		basicStrategy.put("5,A;3", "H");
+		basicStrategy.put("5,A;4", "D");
+		basicStrategy.put("5,A;5", "D");
+		basicStrategy.put("5,A;6", "D");
+		basicStrategy.put("5,A;7", "H");
+		basicStrategy.put("5,A;8", "H");
+		basicStrategy.put("5,A;9", "H");
+		basicStrategy.put("5,A;10", "H");
+		basicStrategy.put("5,A;A", "H");
 
 		// A,4
 		basicStrategy.put("4,A;2", "H");
