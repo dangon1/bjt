@@ -3,7 +3,7 @@ package com.cards;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.main.GameEngine;
+import com.parties.Table;
 import com.utils.Constants;
 
 import lombok.Builder;
@@ -20,7 +20,7 @@ public class DeckPack {
 	
 	public Card getCard() {
 		if(cards.isEmpty()) {
-			GameEngine.createShoe(this, Constants.NUMBER_OF_DECKS);
+			Table.createShoe(this, Constants.NUMBER_OF_DECKS);
 		}
 		return cards.remove(0);
 	}

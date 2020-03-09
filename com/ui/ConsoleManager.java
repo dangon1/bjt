@@ -4,14 +4,15 @@ import java.util.List;
 
 import com.cards.Card;
 import com.parties.Player;
+import com.strategies.CardCountingHiLo;
 import com.utils.Constants;
 
 public class ConsoleManager {
 	
 	private boolean showLog = true;
 	
-	public static void showNewHand() {
-		System.out.println("============NEW HAND===============");
+	public static void showStartingPhase(String phase) {
+		System.out.println("============STARTING " + phase + " PHASE===============");
 	}
 	
 	public static void showHands(List<Integer> playerSumPerSet, List<Integer> dealerSum) {
@@ -29,8 +30,8 @@ public class ConsoleManager {
 		System.out.println("Victories:" + player.getAI().getResultsCounter().getPercentageVictory()+ "%");
 		System.out.println("Draws: " + player.getAI().getResultsCounter().getPercentageDraw() + "%");
 		System.out.println("Defeats: " + player.getAI().getResultsCounter().getPercentageDefeats() + "%");
-		System.out.println("Total Profit: " + player.getAI().getResultsCounter().getTotalProfit());
-		System.out.println("% Profit: " + player.getAI().getResultsCounter().getTotalProfit() / Double.parseDouble(Constants.INITIAL_CASH.toString()) * 100 + "%");
+		System.out.println("Total Profit: " + (player.getTotalCash() - Constants.INITIAL_CASH));
+		System.out.println("% Profit: " + ((player.getTotalCash() - Constants.INITIAL_CASH) / (Double.parseDouble(Constants.INITIAL_CASH.toString())) * 100) + "%");
 
 	}
 	
@@ -76,6 +77,12 @@ public class ConsoleManager {
 	}
 	public static void showTotalCash(Integer totalCash) {
 		System.out.println("TOTAL CASH = " + totalCash);
+		
+	}
+
+	public static void showCount() {
+		System.out.println("RUNNING COUNT = " + CardCountingHiLo.runningCount);
+		System.out.println("TRUE COUNT = " + CardCountingHiLo.getTrueCount());
 		
 	}
 	

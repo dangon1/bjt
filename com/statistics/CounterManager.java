@@ -34,6 +34,15 @@ public class CounterManager {
 		return numberOfLosses;
 	}
 	
+	public static Integer getNumberOfPlayerWins(List<Card> playerCards, List<Card> dealerCards) {
+		Integer numberOfWins = 0;
+		if ((CardUtils.getSumOfCards(playerCards) <= 21)
+				&& (Referee.busted(dealerCards) || CardUtils.getSumOfCards(playerCards) > CardUtils.getSumOfCards(dealerCards))) {
+			numberOfWins++;
+		}
+		return numberOfWins;
+	}
+	
 
 	public static Integer getNumberOfDraws(List<Card> cardsFromCurrentGroup, List<Card> dealerCard) {
 		Integer numberOfDraws = 0;

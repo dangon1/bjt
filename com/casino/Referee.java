@@ -3,7 +3,6 @@ package com.casino;
 import java.util.List;
 
 import com.cards.Card;
-import com.cards.CardsBet;
 import com.parties.Dealer;
 import com.parties.Player;
 import com.statistics.CounterManager;
@@ -31,6 +30,9 @@ public class Referee {
 		numberOfLosses += CounterManager.getNumberOfPlayerLosses(player.getCardsBetMap().get(cardsBetId).getCardsGroup(), dealer.getCards());
 		numberOfDraws += CounterManager.getNumberOfDraws(player.getCardsBetMap().get(cardsBetId).getCardsGroup(), dealer.getCards());
 		numberOfBlackjacks += madeBlackjack(player.getCardsBetMap().get(cardsBetId).getCardsGroup());
+		if(numberOfBlackjacks == 0) {
+			numberOfSimpleWins = CounterManager.getNumberOfPlayerWins(player.getCardsBetMap().get(cardsBetId).getCardsGroup(), dealer.getCards());
+		}
 
 		if (!Constants.PLAYER_BJ_BEATS_DEALER_BJ) {
 			numberOfBlackjacks -= madeBlackjack(dealer.getCards());
@@ -43,8 +45,6 @@ public class Referee {
 			GameBank.payBlackjackToPlayer(player, cardsBetId);
 			CounterManager.addVictory(player);
 		}
-		
-		numberOfSimpleWins = player.getCardsBetMap().size() - numberOfLosses - numberOfDraws - numberOfBlackjacks;
 
 		GameBank.applyResults(player, numberOfLosses, numberOfDraws, numberOfSimpleWins, cardsBetId);
 	}

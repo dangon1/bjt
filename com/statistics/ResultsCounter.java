@@ -38,10 +38,6 @@ public class ResultsCounter {
 		totalHands++;
 	}
 	
-	public void addProfit(Integer value) {
-		totalProfit += value;
-	}
-
 	public Double getPercentageBlackjacks() {
 		return (totalBlackjacks / totalHands) * 100;
 	}

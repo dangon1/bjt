@@ -11,7 +11,7 @@ public class SurrenderValidator {
 			if (Constants.EARLY_SURRENDER) {
 				canSurrender = true;
 			} else if (Constants.LATE_SURRENDER) {
-				if (dealerUpCard.equals("A") || dealerUpCard.equals("A")) {
+				if (dealerUpCard.getFace().equals("A") || dealerUpCard.getFace().equals("10")) {
 					canSurrender = false;
 				} else {
 					canSurrender = true;
